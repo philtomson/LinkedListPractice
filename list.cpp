@@ -9,12 +9,10 @@ template <typename T>
   class LList {
     private:
       struct Node {
-	friend class LList;
-	public:
-	  T data; 
-	  Node* next;
-	  //NOTE:  'const' required below
-	  Node(const T& d):data(d),next(NULL){};
+	T data; 
+	Node* next;
+	//NOTE:  'const' required below
+	Node(const T& d):data(d),next(NULL){};
       };
 
       Node* first;
@@ -39,12 +37,34 @@ template <typename T>
       Node* tail(){ return current;};
       int size(){ return sz;};
 
+      void insert_sorted(const T& d){
+	if(first == NULL) {
+	  first = new Node(d);
+	  current = first;
+	} else {
+	  //make sure we're at the end:
+	  Node* prev = NULL;
+          Node* i = first;
+	  for( i = first; i != NULL && i->data < d; prev=i, i=i->next);
+	  //prev is now either NULL (prior to first item in list)
+	  //or: prev < d < i
+	  if(!i) cout << "is is NULL! " << "d is: " << d << "\n";
+	  if(prev){
+	    prev->next = new Node(d);
+	    prev->next->next = i;
+	  } else {
+            //insert at beginning of list:
+	    first = new Node(d);
+	    first->next = i;
+	  }
+	}
+        sz++;	
+      };
+
       void append(const T& d){
 	if(first == NULL) {
 	  first = new Node(d);
 	  current = first;
-	} else if ( current == NULL) {
-	  current = new Node(d);
 	} else {
 	  //make sure we're at the end:
 	  while( current->next != NULL ) current = current->next;
@@ -99,8 +119,8 @@ template <typename T>
 
 
 int main(){
-  typedef LList<int> intList;
-  intList lst;
+  typedef LList<int> sorted_intList;
+  sorted_intList lst;
   lst.append(1);
   cout << " tail is: "<< (lst.tail()->data) << endl;
   lst.append(2);
@@ -111,7 +131,8 @@ int main(){
   cout << " head is: "<< (lst.head()->data) << endl;
   cout << " there are now: " << lst.size() << " items in the list\n";
   lst.print(":");
-  intList lst2 = intList(lst);
+  sorted_intList lst2 = sorted_intList(lst);
+  sorted_intList lst3;
 
   cout << "\n now delete 2" << endl;
   lst.del(2);
@@ -133,6 +154,13 @@ int main(){
   cout << endl;
   cout << "lst2 has: " << lst2.size() << " items in it\n";
   lst2.print();
+
+  lst3.insert_sorted(10);
+  lst3.insert_sorted(8);
+  lst3.insert_sorted(7);
+  lst3.insert_sorted(17);
+  cout << "\nlst3 is sorted\n";
+  lst3.print();
 
   return 0;
 };

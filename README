@@ -11,3 +11,6 @@ manipulation.  They also very often appear in interview
 questions ;-)
 
 The other idea here is to offer variations on the theme of linked lists.
+
+to compile:
+g++ -o list list.cpp
