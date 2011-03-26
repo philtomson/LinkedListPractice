@@ -19,15 +19,30 @@ template <typename T>
       Node* current;
       int sz;
     public:
-      //ctor:
+      // ctor:
       LList(): first(NULL), current(NULL), sz(0){};
-      //copy ctor:
+      // copy ctor:
       LList(const LList& other): first(NULL), current(NULL), sz(0){ 
         for(const Node* i = other.head(); i != NULL; i=i->next){
 	  append(i->data);
 	}
       };
-      //TODO: destructor
+      // destructor
+      ~LList(){
+	cout << "Destructor called\n";
+	Node* prev = NULL;
+	current = first;
+	while( current != NULL) {
+	  prev = current;
+	  current = current->next;
+	  if(prev) { 
+	    cout << "   getting rid of: " << prev->data << endl;
+	    delete prev;
+	    prev = NULL; 
+	  }
+	}
+	first = NULL;
+      };
 
       //accessors:
       Node* next(){ return current->next;};
