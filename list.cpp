@@ -63,7 +63,7 @@ template <typename T>
 	  for( i = first; i != NULL && i->data < d; prev=i, i=i->next);
 	  //prev is now either NULL (prior to first item in list)
 	  //or: prev < d < i
-	  if(!i) cout << "is is NULL! " << "d is: " << d << "\n";
+	  if(!i) cout << "is NULL! " << "d is: " << d << "\n";
 	  if(prev){
 	    prev->next = new Node(d);
 	    prev->next->next = i;
@@ -99,35 +99,41 @@ template <typename T>
       };
 
       void del(const T& d, bool firstOnly=true){
-	if(d == first->data){
-	  Node* tmp = first;
-	  first = first->next;
-	  sz--;
-	  delete tmp;
-	} else {
-	  Node* prev = first;
-	  for( Node* i = first; i != NULL; prev=i, i=i->next){
-	    cout << "  i->data is: " << i->data << endl;
-	    if(d == i->data){
-	      prev->next = i->next;
-	      delete i;
-	      sz--;
-	      if(firstOnly) break; 
+	Node* prevPtr;
+
+	// For 1st node there is no previous.
+	prevPtr = NULL;
+	// Visit each node, maintaining a pointer to
+	// the previous node we just visited.
+	for (current = first;
+	     current != NULL;
+	     prevPtr = current, current = current->next ) {
+	  
+	  if (current->data == d) {  //found it
+	    if (prevPtr == NULL) {
+	      //remove first item
+	      first = current->next;
+	    } else {
+	      // skip over the removed node.
+	      prevPtr->next = current->next;
 	    }
+	    delete current;  
+	    sz--;
+	    if(firstOnly) break;
 	  }
-	}
+        }
       };
 
 //NOTE: without 'const char*' below, g++ returns:
 //warning: deprecated conversion from string constant to ‘char*’
       void print(const char* sep = ", ") const {
-	cout << endl;
+	cout << "[" ;
         for( Node* i = first; i != NULL; i=i->next){
 	  cout << i->data;
 	  if(i->next)
 	    cout << sep;
 	}
-	cout << endl;
+	cout <<"]" << endl;
       };
   };
 
@@ -152,22 +158,34 @@ int main(){
   cout << "\n now delete 2" << endl;
   lst.del(2);
   lst.print(":");
-  cout << " there are now: " << lst.size() << " items in the list\n";
-  cout << " there are now: " << lst.count() << " items in the list\n";
+  //make sure that size() and count() are returning the same thing here:
+  cout << " there are now: " << lst.size() << " items in the list(size)\n";
+  cout << " there are now: " << lst.count() << " items in the list(length)\n";
 
   cout << "\n now delete 1" << endl;
   lst.del(1);
   lst.print(":");
-  cout << " there are now: " << lst.size() << " items in the list\n";
-  cout << " there are now: " << lst.count() << " items in the list\n";
+  cout << " there are now: " << lst.size() << " items in the list(size)\n";
+  cout << " there are now: " << lst.count() << " items in the list(length)\n";
 
+  cout << "\n now append 3" << endl;
+  lst.append(3);
+  lst.print(":");
+
+  cout << "\n now delete 3" << endl;
   lst.del(3);
   lst.print(":");
-  cout << " there are now: " << lst.size() << " items in the list\n";
-  cout << " there are now: " << lst.count() << " items in the list\n";
+  cout << " there are now: " << lst.size() << " items in the list(size)\n";
+  cout << " there are now: " << lst.count() << " items in the list(length)\n";
+
+  cout << "\n now delete 3" << endl;
+  lst.del(3);
+  lst.print(":");
+  cout << " there are now: " << lst.size() << " items in the list(size)\n";
+  cout << " there are now: " << lst.count() << " items in the list(length)\n";
 
   cout << endl;
-  cout << "lst2 has: " << lst2.size() << " items in it\n";
+  cout << "lst2 has: " << lst2.size() << " items in it(size)\n";
   lst2.print();
 
   lst3.insert_sorted(10);
