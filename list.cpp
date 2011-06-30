@@ -98,6 +98,8 @@ template <typename T>
 	return c;
       };
 
+
+
       void del(const T& d, bool firstOnly=true){
 	Node* prevPtr;
 
@@ -124,6 +126,20 @@ template <typename T>
         }
       };
 
+
+     //del2 is simpler in that it uses a pointer to a pointer
+     //which makes things simpler (no special case for the first 
+     //node)
+      void del2(const T& d){
+	Node** npp;
+	for(npp = &first; *npp != NULL; npp = &( (*npp)->next) ){
+	  //Node* np = *npp;
+	  if((*npp)->data == d){
+	    *npp = (*npp)->next;
+	    break;
+	  }
+	}
+      };
 //NOTE: without 'const char*' below, g++ returns:
 //warning: deprecated conversion from string constant to ‘char*’
       void print(const char* sep = ", ") const {
@@ -134,6 +150,25 @@ template <typename T>
 	    cout << sep;
 	}
 	cout <<"]" << endl;
+      };
+
+      Node* rev(){
+        first = revInt(first);
+	current = first;
+      };
+
+    private:
+      Node* revInt(Node* old_list){
+	Node* new_list = NULL;
+	while(old_list != NULL){
+	  //remove node from old_list
+	  Node* node = old_list;
+	  old_list   = old_list->next;
+          //insert node in new list 
+	  node->next = new_list;
+	  new_list = node;
+	}
+	return new_list;
       };
   };
 
@@ -156,7 +191,7 @@ int main(){
   sorted_intList lst3;
 
   cout << "\n now delete 2" << endl;
-  lst.del(2);
+  lst.del2(2);
   lst.print(":");
   //make sure that size() and count() are returning the same thing here:
   cout << " there are now: " << lst.size() << " items in the list(size)\n";
@@ -193,6 +228,10 @@ int main(){
   lst3.insert_sorted(7);
   lst3.insert_sorted(17);
   cout << "\nlst3 is sorted\n";
+  lst3.print();
+
+  cout << "\nreverse lst3:\n";
+  lst3.rev();
   lst3.print();
 
   return 0;
